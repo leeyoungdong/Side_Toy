@@ -1,0 +1,61 @@
+인터파크 month 데이터 하나의 데이터로 join 쿼리
+-- CREATE TABLE NEW_TABLE
+-- select *  FROM project.interpark_month_grade x
+-- select x.21, x.30 ,y.3, y.5 ,y.15 ,y.51 ,y.187 ,y.188,y.`rank` ,z.315 ,z.319 ,z.`date`  FROM project.interpark_month_grade x
+-- left outer join project.interpark_month_info y 
+-- on x.`date` = y.`date` 
+-- left outer join project.interpark_month_sales z 
+-- on x.`date` = z.`date` 
+-- where x.21 = y.188 
+-- and y.188 = z.319;
+-- order by `rank`
+
+인터파크 year 데이터 하나의 데이터로 join 쿼리
+-- select x.21, x.30 ,y.3, y.5 ,y.15 ,y.51 ,y.186 ,y.187,y.`rank` ,z.315 ,z.319 ,z.`date`   FROM project.interpark_year_grade x
+-- left outer join project.interpark_year_info y 
+-- on x.`date` = y.`date` 
+-- left outer join project.interpark_year_sales z 
+-- on x.`date` = z.`date` 
+-- where x.21 = y.187 
+-- and y.187 = z.319; 
+-- order by `rank`
+
+중복 확인 쿼리
+select  * from project2.information li   
+group by li.title  
+having count(li.title) > 1; 
+
+칼럼 데이터 타입 변경 쿼리
+ALTER TABLE project2.information MODIFY COLUMN title VARCHAR(700) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL;
+
+칼럼 기본 키 설정 쿼리(title 기준)
+ALTER TABLE project2.information ADD CONSTRAINT information_pk PRIMARY KEY (title);
+
+칼럼 외래키 설정 쿼리(title 기준)
+ALTER TABLE project2.book_table ADD CONSTRAINT book_table_FK FOREIGN KEY (title) REFERENCES project2.information(title);
+
+외래키 제약 조건 끄기(바꾸기  = 1)
+SET FOREIGN_KEY_CHECKS=0;
+
+itemkey를 기반으로한 DW에서의 포털별 확인(yes24 - y, kyobo - k, aladin - a, interpark - i)
+select * from project2.book_table b1
+join project2.book_table_daily b2
+on b1.`index` = b2.`index` 
+having  b1.itemkey like "%{}"
+
+포탈 reputation과 buyc 테이블 조인을 통한 portal(yes24, aladin)간 차이 확인
+select * from project2.book_table b1
+join project2.reputation r
+on r.itemkey = b1.itemkey 
+join project2.buyc bc
+on r.portal = bc.portal 
+where bc.portal like "%{}%"
+
+18년부터 20년까지의 베스트 셀러에 올랐던 책 리스트 정보
+select * from project2.book_table b1
+join project2.information i 
+on i.title = b1.title 
+left join project2.period p
+on p.`date` = b1.`date`
+having p.`year` >= '2018' and p.`year` <='2020'
+

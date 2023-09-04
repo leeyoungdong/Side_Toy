@@ -1,0 +1,11 @@
+기본  View 테이블 생성
+create veiw {}
+as
+(
+	select * from {}
+	[ex.group by or join..etc]
+)
+
+View 테이블 삭제 
+drop view {};
+
